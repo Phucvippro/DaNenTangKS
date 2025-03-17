@@ -1,32 +1,55 @@
 import 'package:flutter/material.dart';
-import 'screens/backid.dart';
-import 'screens/frontid.dart';
-import 'screens/infor.dart';
-import 'screens/signin.dart';
-import 'screens/signup.dart';
-import 'screens/welcome.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:app/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:app/screens/welcome.dart';
+import 'injection_container.dart' as di;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.init();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter App',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => WelcomeScreen(),
-        '/signup': (context) => SignupScreen(),
-        '/signin': (context) => SigninScreen(),
-        '/frontid': (context) => FrontIdScreen(),
-        '/backid': (context) => BackIdScreen(),
-        '/infor': (context) => InforScreen(),
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (_) => di.sl<AuthBloc>(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Ứng dụng Xác thực',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          primaryColor: const Color(0xff078fff),
+          fontFamily: 'Inter',
+        ),
+        home: const WelcomeScreen()
+      ),
+    );
+  }
+}
+
+// Thêm InforScreen tạm thời nếu chưa có
+class InforScreen extends StatelessWidget {
+  const InforScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Thông tin người dùng'),
+        backgroundColor: const Color(0xff078fff),
+        foregroundColor: Colors.white,
+      ),
+      body: const Center(
+        child: Text('Màn hình thông tin người dùng'),
+      ),
     );
   }
 }

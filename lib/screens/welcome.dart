@@ -92,8 +92,8 @@ class _WelcomeScreen extends State<WelcomeScreen> {
             ),
             // Text "Hoặc"
             Positioned(
-              left: screenWidth * 0.45,
-              top: screenHeight * 0.72,
+              left: screenWidth * 0.415,
+              top: screenHeight * 0.715,
               child: const Text(
                 'Hoặc',
                 style: TextStyle(
@@ -115,7 +115,7 @@ class _WelcomeScreen extends State<WelcomeScreen> {
             ),
             // Đường kẻ bên phải
             Positioned(
-              left: screenWidth * 0.55,
+              left: screenWidth * 0.57,
               width: screenWidth * 0.25,
               top: screenHeight * 0.735,
               child: Container(
