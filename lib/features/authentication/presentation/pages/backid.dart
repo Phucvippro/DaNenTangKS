@@ -148,7 +148,7 @@ class _BackIdScreen extends State<BackIdScreen> {
                     elevation: 2,
                   ),
                   child: const Text(
-                    'Đăng kí',
+                    'Hoàn Tất',
                     style: TextStyle(
                       fontSize: 24,
                       color: Colors.white,
