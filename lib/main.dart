@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:app/screens/welcome.dart';
+import 'package:app/features/authentication/presentation/pages/welcome.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
