@@ -140,7 +140,7 @@ class _SignupScreen extends State<SignupScreen> {
                           child: state is AuthLoading
                               ? const CircularProgressIndicator(color: Colors.white)
                               : const Text(
-                                  'Xác minh căn cước',
+                                  'Đăng kí',
                                   style: TextStyle(
                                     fontSize: 24,
                                     color: Colors.white,
