@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'signin.dart';
+import 'package:app/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:app/features/authentication/presentation/bloc/auth_event.dart';
+import 'package:app/features/authentication/presentation/bloc/auth_state.dart';
+import 'infor.dart';
 
 class BackIdScreen extends StatefulWidget {
   const BackIdScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _BackIdScreen();
+  _BackIdScreenState createState() => _BackIdScreenState();
 }
 
-class _BackIdScreen extends State<BackIdScreen> {
-  File? _imageFile;
+class _BackIdScreenState extends State<BackIdScreen> {
+  File? _backIdImage;
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> _takePicture() async {
-    try {
-      final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-      if (photo != null) {
-        setState(() {
-          _imageFile = File(photo.path);
-        });
-      }
-    } catch (e) {
-      print('Lỗi khi chụp ảnh: $e');
+  Future<void> _takePhoto() async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    if (photo != null) {
+      setState(() {
+        _backIdImage = File(photo.path);
+      });
+    }
+  }
+
+  Future<void> _chooseFromGallery() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _backIdImage = File(image.path);
+      });
     }
   }
 
@@ -33,129 +42,140 @@ class _BackIdScreen extends State<BackIdScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: SafeArea(
+      appBar: AppBar(
+        title: const Text('Xác minh căn cước'),
+        backgroundColor: const Color(0xff078fff),
+        foregroundColor: Colors.white,
+      ),
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is VerificationSuccess) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const InforScreen()),
+            );
+          } else if (state is VerificationError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+          width: screenWidth,
+          color: Colors.white,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Padding(
-                padding: EdgeInsets.all(screenWidth * 0.05),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Xác minh mặt sau căn cước',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: const Color(0xff078fff),
-                        fontFamily: 'Inter-Bold',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
-                    Text(
-                      'Vui lòng đưa căn cước vào khung hình',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontFamily: 'Inter-Regular',
-                      ),
-                    ),
-                  ],
+              SizedBox(height: screenHeight * 0.05),
+              const Text(
+                'Vui lòng cung cấp ảnh mặt sau căn cước công dân/CMND của bạn',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
                 ),
+                textAlign: TextAlign.center,
               ),
-
-              // Camera Preview Container
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                  child: GestureDetector(
-                    onTap: _takePicture,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.25),
-                            offset: const Offset(0, 4),
-                            blurRadius: 4,
+              SizedBox(height: screenHeight * 0.05),
+              Container(
+                width: screenWidth * 0.9,
+                height: screenHeight * 0.3,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: _backIdImage == null
+                    ? const Center(
+                        child: Text(
+                          'Chưa có ảnh',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
                           ),
-                        ],
+                        ),
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          _backIdImage!,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      child: _imageFile != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.file(
-                                _imageFile!,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
-                            )
-                          : Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.camera_alt,
-                                    size: 48,
-                                    color: Colors.grey[400],
-                                  ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    'Nhấn để chụp ảnh',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ],
+              ),
+              SizedBox(height: screenHeight * 0.05),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _takePhoto,
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Chụp ảnh'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff078fff),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: _chooseFromGallery,
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('Chọn ảnh'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff078fff),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.1),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  return Center(
+                    child: ElevatedButton(
+                      onPressed: (_backIdImage == null || state is AuthLoading)
+                          ? null
+                          : () {
+                              final bloc = context.read<AuthBloc>();
+                              if (bloc is Authenticated) {
+                                // Lấy user ID từ state
+                                final userId = (bloc as Authenticated).user.id;
+                                context.read<AuthBloc>().add(
+                                      VerifyIdEvent(
+                                        userId: userId,
+                                        idImagePath: _backIdImage!.path,
+                                      ),
+                                    );
+                              } else {
+                                // Trong trường hợp đăng ký và chưa có user ID, có thể cần xử lý khác
+                                // Tùy thuộc vào thiết kế của ứng dụng
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Lỗi xác thực người dùng. Vui lòng đăng nhập lại.')),
+                                );
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff078fff),
+                        minimumSize: Size(screenWidth * 0.9, 64),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: state is AuthLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                              'Xác minh',
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: Colors.white,
+                                fontFamily: 'Inter-Bold',
                               ),
                             ),
                     ),
-                  ),
-                ),
-              ),
-
-              // Button
-              Padding(
-                padding: EdgeInsets.all(screenWidth * 0.05),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_imageFile != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SigninScreen()),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Vui lòng chụp ảnh mặt sau căn cước'),
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff078fff),
-                    minimumSize: Size(double.infinity, 64),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 2,
-                  ),
-                  child: const Text(
-                    'Hoàn Tất',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                      fontFamily: 'Inter-Bold',
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
             ],
           ),

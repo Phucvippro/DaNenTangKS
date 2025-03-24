@@ -1,10 +1,11 @@
+import 'package:app/features/authentication/presentation/pages/infor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_state.dart';
 import 'package:app/core/utils/input_validator.dart';
-import 'frontid.dart';
+import 'infor.dart';
 import 'signin.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _SignupScreen extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  
+
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -40,9 +41,10 @@ class _SignupScreen extends State<SignupScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is SignUpSuccess) {
-            Navigator.push(
+            Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => FrontIdScreen()),
+              MaterialPageRoute(builder: (context) => const InforScreen()),
+              (route) => false,
             );
           } else if (state is SignUpError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -106,10 +108,9 @@ class _SignupScreen extends State<SignupScreen> {
                         _isConfirmPasswordVisible = value;
                       });
                     },
-                    validator: (value) => InputValidator.validateConfirmPassword(
-                      value, 
-                      _passwordController.text
-                    ),
+                    validator: (value) =>
+                        InputValidator.validateConfirmPassword(
+                            value, _passwordController.text),
                   ),
                   SizedBox(height: screenHeight * 0.05),
                   // Verify ID Button
@@ -125,7 +126,8 @@ class _SignupScreen extends State<SignupScreen> {
                                           SignUpEvent(
                                             username: _usernameController.text,
                                             password: _passwordController.text,
-                                            confirmPassword: _confirmPasswordController.text,
+                                            confirmPassword:
+                                                _confirmPasswordController.text,
                                           ),
                                         );
                                   }
@@ -138,7 +140,8 @@ class _SignupScreen extends State<SignupScreen> {
                             ),
                           ),
                           child: state is AuthLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
                               : const Text(
                                   'Đăng kí',
                                   style: TextStyle(
@@ -169,7 +172,8 @@ class _SignupScreen extends State<SignupScreen> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SigninScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => SigninScreen()),
                             );
                           },
                           child: const Text(
@@ -218,7 +222,8 @@ class _SignupScreen extends State<SignupScreen> {
           obscureText: isPassword && !(isPasswordVisible ?? false),
           validator: validator,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Colors.black),
@@ -234,7 +239,9 @@ class _SignupScreen extends State<SignupScreen> {
             suffixIcon: isPassword
                 ? IconButton(
                     icon: Icon(
-                      isPasswordVisible ?? false ? Icons.visibility : Icons.visibility_off,
+                      isPasswordVisible ?? false
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Colors.grey,
                     ),
                     onPressed: () {
