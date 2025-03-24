@@ -5,7 +5,6 @@ import 'package:app/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_state.dart';
 import 'package:app/core/utils/input_validator.dart';
-import 'infor.dart';
 import 'signin.dart';
 
 class SignupScreen extends StatefulWidget {
