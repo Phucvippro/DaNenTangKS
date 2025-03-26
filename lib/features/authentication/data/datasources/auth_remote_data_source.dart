@@ -69,7 +69,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           return user;
         } catch (e) {
           if (e is InvalidCredentialsFailure) {
-            throw e;
+            rethrow;
           }
           developer.log('Lỗi khi parse JSON hoặc tạo UserModel: $e', error: e);
           throw ServerFailure();
@@ -84,7 +84,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
     } catch (e, stackTrace) {
       if (e is InvalidCredentialsFailure) {
-        throw e;
+        rethrow;
       }
       developer.log('Có lỗi xảy ra khi đăng nhập: $e',
           error: e, stackTrace: stackTrace);

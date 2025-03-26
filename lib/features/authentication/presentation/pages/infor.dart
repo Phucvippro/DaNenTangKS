@@ -153,11 +153,11 @@ class InfoCard extends StatelessWidget {
   final List<InfoItem> items;
   
   const InfoCard({
-    Key? key, 
+    super.key, 
     required this.icon,
     required this.title,
     required this.items,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -199,10 +199,10 @@ class InfoItem extends StatelessWidget {
   final String value;
   
   const InfoItem({
-    Key? key, 
+    super.key, 
     required this.label, 
     required this.value,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +238,8 @@ class InfoItem extends StatelessWidget {
 }
 
 class AddInfoOptionsBottomSheet extends StatelessWidget {
+  const AddInfoOptionsBottomSheet({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -291,12 +293,12 @@ class OptionButton extends StatelessWidget {
   final VoidCallback onTap;
 
   const OptionButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

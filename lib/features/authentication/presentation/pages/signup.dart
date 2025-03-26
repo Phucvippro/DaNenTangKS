@@ -1,6 +1,6 @@
-import 'package:app/features/authentication/presentation/pages/infor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/features/authentication/presentation/pages/infor.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:app/features/authentication/presentation/bloc/auth_state.dart';
@@ -11,17 +11,20 @@ class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _SignupScreen();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreen extends State<SignupScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
-
+  
+  // Controllers
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  // Password visibility states
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   void dispose() {
@@ -31,12 +34,22 @@ class _SignupScreen extends State<SignupScreen> {
     super.dispose();
   }
 
+  void _performSignUp(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthBloc>().add(
+            SignUpEvent(
+              username: _usernameController.text,
+              password: _passwordController.text,
+              confirmPassword: _confirmPasswordController.text,
+            ),
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
+      backgroundColor: Colors.white,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is SignUpSuccess) {
@@ -47,148 +60,51 @@ class _SignupScreen extends State<SignupScreen> {
             );
           } else if (state is SignUpError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
             );
           }
         },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-            width: screenWidth,
-            height: screenHeight,
-            color: Colors.white,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: screenHeight * 0.1),
-                  Center(
-                    child: Text(
-                      'Đăng kí',
-                      style: TextStyle(
-                        fontSize: 42,
-                        color: const Color(0xff078fff),
-                        fontFamily: 'Inter-Bold',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.05),
-                  // Username field
-                  _buildTextField(
-                    controller: _usernameController,
-                    label: 'Tên đăng nhập',
-                    validator: InputValidator.validateUsername,
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Password field
-                  _buildTextField(
-                    controller: _passwordController,
-                    label: 'Mật khẩu',
-                    isPassword: true,
-                    isPasswordVisible: _isPasswordVisible,
-                    onVisibilityChanged: (value) {
-                      setState(() {
-                        _isPasswordVisible = value;
-                      });
-                    },
-                    validator: InputValidator.validatePassword,
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Confirm Password field
-                  _buildTextField(
-                    controller: _confirmPasswordController,
-                    label: 'Nhập lại mật khẩu',
-                    isPassword: true,
-                    isPasswordVisible: _isConfirmPasswordVisible,
-                    onVisibilityChanged: (value) {
-                      setState(() {
-                        _isConfirmPasswordVisible = value;
-                      });
-                    },
-                    validator: (value) =>
-                        InputValidator.validateConfirmPassword(
-                            value, _passwordController.text),
-                  ),
-                  SizedBox(height: screenHeight * 0.05),
-                  // Verify ID Button
-                  Center(
-                    child: BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, state) {
-                        return ElevatedButton(
-                          onPressed: state is AuthLoading
-                              ? null
-                              : () {
-                                  if (_formKey.currentState!.validate()) {
-                                    context.read<AuthBloc>().add(
-                                          SignUpEvent(
-                                            username: _usernameController.text,
-                                            password: _passwordController.text,
-                                            confirmPassword:
-                                                _confirmPasswordController.text,
-                                          ),
-                                        );
-                                  }
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff078fff),
-                            minimumSize: Size(screenWidth * 0.9, 64),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          child: state is AuthLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white)
-                              : const Text(
-                                  'Đăng kí',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.white,
-                                    fontFamily: 'Inter-Bold',
-                                  ),
-                                ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.03),
-                  // Login Link
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Đã có tài khoản? ',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                            fontFamily: 'Inter-Regular',
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SigninScreen()),
-                            );
-                          },
-                          child: const Text(
-                            'Đăng nhập ngay!',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0xff078fff),
-                              fontFamily: 'Inter-Regular',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header
+                    _buildHeader(),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Username Field
+                    _buildUsernameField(),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Password Field
+                    _buildPasswordField(),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Confirm Password Field
+                    _buildConfirmPasswordField(),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Sign Up Button
+                    _buildSignUpButton(),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Sign In Link
+                    _buildSignInLink(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -197,60 +113,219 @@ class _SignupScreen extends State<SignupScreen> {
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    bool isPassword = false,
-    bool? isPasswordVisible,
-    Function(bool)? onVisibilityChanged,
-    String? Function(String?)? validator,
-  }) {
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        Text(
+          'Đăng kí',
+          style: TextStyle(
+            fontSize: 36,
+            color: const Color(0xff078fff),
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Tạo tài khoản mới của bạn',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[600],
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUsernameField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
-          style: const TextStyle(
-            fontSize: 20,
-            color: Colors.black,
+          'Tên đăng nhập',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[800],
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: controller,
-          obscureText: isPassword && !(isPasswordVisible ?? false),
-          validator: validator,
-          decoration: InputDecoration(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.black),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.black),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xff078fff), width: 2),
-            ),
-            suffixIcon: isPassword
-                ? IconButton(
-                    icon: Icon(
-                      isPasswordVisible ?? false
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      onVisibilityChanged?.call(!(isPasswordVisible ?? false));
-                    },
-                  )
-                : null,
+          controller: _usernameController,
+          validator: InputValidator.validateUsername,
+          decoration: _inputDecoration(
+            hintText: 'Nhập tên đăng nhập',
+            prefixIcon: Icons.person_outline,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Mật khẩu',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[800],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: _passwordController,
+          obscureText: !_isPasswordVisible,
+          validator: InputValidator.validatePassword,
+          decoration: _inputDecoration(
+            hintText: 'Nhập mật khẩu',
+            prefixIcon: Icons.lock_outline,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConfirmPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Nhập lại mật khẩu',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[800],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: _confirmPasswordController,
+          obscureText: !_isConfirmPasswordVisible,
+          validator: (value) => 
+            InputValidator.validateConfirmPassword(value, _passwordController.text),
+          decoration: _inputDecoration(
+            hintText: 'Xác nhận mật khẩu',
+            prefixIcon: Icons.lock_outline,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignUpButton() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return ElevatedButton(
+          onPressed: state is AuthLoading ? null : () => _performSignUp(context),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xff078fff),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 56),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 3,
+          ),
+          child: state is AuthLoading
+              ? const CircularProgressIndicator(color: Colors.white)
+              : const Text(
+                  'Đăng kí',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSignInLink() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Đã có tài khoản? ',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[700],
+          ),
+        ),
+        GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SigninScreen()),
+          ),
+          child: Text(
+            'Đăng nhập ngay!',
+            style: TextStyle(
+              fontSize: 16,
+              color: const Color(0xff078fff),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    required String hintText,
+    required IconData prefixIcon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: TextStyle(color: Colors.grey[500]),
+      prefixIcon: Icon(prefixIcon, color: Colors.grey),
+      suffixIcon: suffixIcon,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: _outlineInputBorder(),
+      enabledBorder: _outlineInputBorder(),
+      focusedBorder: _outlineInputBorder(color: const Color(0xff078fff), width: 2),
+      errorBorder: _outlineInputBorder(color: Colors.red),
+      filled: true,
+      fillColor: Colors.grey[100],
+    );
+  }
+
+  OutlineInputBorder _outlineInputBorder({
+    Color? color,
+    double width = 1,
+  }) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(
+        color: color ?? Colors.grey[300]!,
+        width: width,
+      ),
     );
   }
 }

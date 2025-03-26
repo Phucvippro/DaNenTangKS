@@ -2,24 +2,15 @@ import '../../domain/entities/user_info.dart';
 
 class UserInfoModel extends UserInfo {
   UserInfoModel({
-    String? id,
-    String? name,
-    String? email,
-    String? phoneNumber,
-    String? address,
-    String? occupation,
-    String? workplace,
-    bool isVerified = false,
-  }) : super(
-          id: id,
-          name: name,
-          email: email,
-          phoneNumber: phoneNumber,
-          address: address,
-          occupation: occupation,
-          workplace: workplace,
-          isVerified: isVerified,
-        );
+    super.id,
+    super.name,
+    super.email,
+    super.phoneNumber,
+    super.address,
+    super.occupation,
+    super.workplace,
+    super.isVerified,
+  });
 
   factory UserInfoModel.fromJson(Map<String, dynamic> json) {
     return UserInfoModel(

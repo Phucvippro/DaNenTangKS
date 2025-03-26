@@ -2,152 +2,91 @@ import 'package:flutter/material.dart';
 import 'signin.dart';
 import 'signup.dart';
 
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _WelcomeScreen();
-}
-
-class _WelcomeScreen extends State<WelcomeScreen> {
-  @override
   Widget build(BuildContext context) {
-    // Lấy kích thước màn hình
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        width: screenWidth,
-        height: screenHeight,
-        child: Stack(
+      backgroundColor: const Color(0xff078fff),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Background màu xanh
-            Positioned(
-              left: 0,
-              width: screenWidth,
-              top: 0,
-              height: screenHeight * 0.6, // 60% chiều cao màn hình
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xff078fff),
+            // Welcome Header
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: Text(
+                  'Chào Mừng',
+                  style: TextStyle(
+                    fontSize: 48,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
             ),
-            // Container màu trắng bo góc
-            Positioned(
-              left: 0,
-              width: screenWidth,
-              top: screenHeight * 0.4, // 40% chiều cao màn hình
-              height: screenHeight * 0.6, // 60% chiều cao màn hình
+
+            // White Container with Buttons
+            Expanded(
+              flex: 3,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-            ),
-            // Text Chào mừng
-            Positioned(
-              left: screenWidth * 0.2,
-              top: screenHeight * 0.2,
-              child: const Text(
-                'Chào Mừng',
-                style: TextStyle(
-                  fontSize: 42,
-                  color: Colors.white,
-                  fontFamily: 'Inter-Bold',
-                ),
-              ),
-            ),
-            // Nút đăng nhập
-            Positioned(
-              left: screenWidth * 0.15,
-              width: screenWidth * 0.7,
-              top: screenHeight * 0.6,
-              height: screenHeight * 0.08,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SigninScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff078fff),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
                   ),
                 ),
-                child: const Text(
-                  'Đăng nhập',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white,
-                    fontFamily: 'Inter-Bold',
-                  ),
-                ),
-              ),
-            ),
-            // Text "Hoặc"
-            Positioned(
-              left: screenWidth * 0.415,
-              top: screenHeight * 0.715,
-              child: const Text(
-                'Hoặc',
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.black,
-                  fontFamily: 'Inter-Regular',
-                ),
-              ),
-            ),
-            // Đường kẻ bên trái
-            Positioned(
-              left: screenWidth * 0.15,
-              width: screenWidth * 0.25,
-              top: screenHeight * 0.735,
-              child: Container(
-                height: 1,
-                color: Colors.black,
-              ),
-            ),
-            // Đường kẻ bên phải
-            Positioned(
-              left: screenWidth * 0.57,
-              width: screenWidth * 0.25,
-              top: screenHeight * 0.735,
-              child: Container(
-                height: 1,
-                color: Colors.black,
-              ),
-            ),
-            // Nút đăng ký
-            Positioned(
-              left: screenWidth * 0.15,
-              width: screenWidth * 0.7,
-              top: screenHeight * 0.78,
-              height: screenHeight * 0.08,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignupScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff078fff),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: const Text(
-                  'Đăng kí',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white,
-                    fontFamily: 'Inter-Bold',
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Sign In Button
+                      _buildButton(
+                        context, 
+                        text: 'Đăng nhập', 
+                        onPressed: () => Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: (context) => SigninScreen())
+                        )
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Divider with "Hoặc"
+                      Row(
+                        children: [
+                          Expanded(child: Divider(color: Colors.grey[400])),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'Hoặc',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          Expanded(child: Divider(color: Colors.grey[400])),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Sign Up Button
+                      _buildButton(
+                        context, 
+                        text: 'Đăng kí', 
+                        onPressed: () => Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: (context) => SignupScreen())
+                        )
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -155,6 +94,30 @@ class _WelcomeScreen extends State<WelcomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  // Reusable Button Widget
+  Widget _buildButton(BuildContext context, {
+    required String text, 
+    required VoidCallback onPressed
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xff078fff),
+        foregroundColor: Colors.white,
+        minimumSize: const Size(double.infinity, 56),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        elevation: 3,
+      ),
+      child: Text(text),
     );
   }
 }
