@@ -29,7 +29,7 @@ class _AddManualInfoScreenState extends State<AddManualInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Thêm thông tin thủ công"),
+        title: const Text("Chỉnh sửa thông tin"),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -134,7 +134,7 @@ class _AddManualInfoScreenState extends State<AddManualInfoScreen> {
                     if (_formKey.currentState!.validate()) {
                       // Xử lý lưu thông tin
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Đã lưu thông tin thành công')),
+                        const SnackBar(content: Text('Lưu thông tin thành công')),
                       );
                       Navigator.pop(context);
                     }

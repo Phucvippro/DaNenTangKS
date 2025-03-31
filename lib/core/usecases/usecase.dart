@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-
+import 'package:equatable/equatable.dart';
 import '../errors/failures.dart';
 
 abstract class UseCase<Type, Params> {
@@ -7,4 +7,7 @@ abstract class UseCase<Type, Params> {
 }
 
 // Cho các usecase không cần tham số
-class NoParams {}
+class NoParams extends Equatable {
+  @override
+  List<Object?> get props => [];
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'frontid.dart';
 import 'add_manual_info.dart';
+import '../../../schedule/presentation/pages/schedule_screen.dart';
 
 class InforScreen extends StatelessWidget {
   const InforScreen({super.key});
@@ -11,7 +12,7 @@ class InforScreen extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => AddInfoOptionsBottomSheet(),
+      builder: (context) => const AddInfoOptionsBottomSheet(),
     );
   }
 
@@ -71,19 +72,23 @@ class InforScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Container(
-                            width: 100,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "QR Code",
-                                style: TextStyle(color: Colors.white),
+                          Row(
+                            children: [
+                              Container(
+                                width: 100,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "QR Code",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
@@ -95,13 +100,39 @@ class InforScreen extends StatelessWidget {
             
             const SizedBox(height: 24),
             
-            const Text(
-              "THÔNG TIN CHI TIẾT",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "THÔNG TIN CHI TIẾT",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                
+                // Add attendance button here
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ScheduleScreen()),
+                    );
+                  },
+                  icon: const Icon(Icons.calendar_today, size: 18),
+                  label: const Text("Điểm danh"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
             ),
             
             const SizedBox(height: 16),
@@ -135,6 +166,15 @@ class InforScreen extends StatelessWidget {
                     items: [
                       InfoItem(label: 'Nghề nghiệp', value: 'chưa cập nhật'),
                       InfoItem(label: 'Nơi làm việc', value: 'chưa cập nhật'),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  InfoCard(
+                    icon: Icons.calendar_month_outlined,
+                    title: 'Thông tin điểm danh',
+                    items: [
+                      InfoItem(label: 'Tháng hiện tại', value: '22/30 ngày'),
+                      InfoItem(label: 'Tuần này', value: '4/5 ngày'),
                     ],
                   ),
                 ],
@@ -248,7 +288,7 @@ class AddInfoOptionsBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            'Thêm thông tin',
+            'Thêm/Chỉnh sửa thông tin',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -258,7 +298,7 @@ class AddInfoOptionsBottomSheet extends StatelessWidget {
           OptionButton(
             icon: Icons.badge_outlined,
             title: 'Xác minh căn cước công dân',
-            subtitle: 'Lấy thông tin tự động từ CCCD',
+            subtitle: 'Lấy thông tin từ CCCD',
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
@@ -270,8 +310,8 @@ class AddInfoOptionsBottomSheet extends StatelessWidget {
           const SizedBox(height: 16),
           OptionButton(
             icon: Icons.edit_outlined,
-            title: 'Thêm thông tin thủ công',
-            subtitle: 'Nhập thông tin cá nhân thủ công',
+            title: 'Chỉnh sửa thông tin',
+            subtitle: 'Nhập thông tin cá nhân',
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
