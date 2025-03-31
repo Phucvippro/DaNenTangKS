@@ -38,7 +38,7 @@ class ScheduleRemoteDataSourceImpl implements ScheduleRemoteDataSource {
   @override
   Future<List<AttendanceRecordModel>> getAttendanceRecords(DateTime startDate, DateTime endDate) async {
     final response = await client.get(
-      Uri.parse('$baseUrl/api/attendance?startDate=${startDate.toIso8601String()}&endDate=${endDate.toIso8601String()}'),
+      Uri.parse('$baseUrl/attendance?startDate=${startDate.toIso8601String()}&endDate=${endDate.toIso8601String()}'),
       headers: {
         'Content-Type': 'application/json',
         // Add authorization header if needed
@@ -56,7 +56,7 @@ class ScheduleRemoteDataSourceImpl implements ScheduleRemoteDataSource {
   @override
   Future<List<SalaryInfoModel>> getSalaryInfo(int year) async {
     final response = await client.get(
-      Uri.parse('$baseUrl/api/salary?year=$year'),
+      Uri.parse('$baseUrl/salary?year=$year'),
       headers: {
         'Content-Type': 'application/json',
         // Add authorization header if needed
@@ -74,7 +74,7 @@ class ScheduleRemoteDataSourceImpl implements ScheduleRemoteDataSource {
   @override
   Future<void> addAttendanceRecord(AttendanceRecordModel record) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/api/attendance'),
+      Uri.parse('$baseUrl/attendance'),
       headers: {
         'Content-Type': 'application/json',
         // Add authorization header if needed
@@ -90,7 +90,7 @@ class ScheduleRemoteDataSourceImpl implements ScheduleRemoteDataSource {
   @override
   Future<void> updateAttendanceRecord(AttendanceRecordModel record) async {
     final response = await client.put(
-      Uri.parse('$baseUrl/api/attendance/${record.date.toIso8601String()}'),
+      Uri.parse('$baseUrl/attendance/${record.date.toIso8601String()}'),
       headers: {
         'Content-Type': 'application/json',
         // Add authorization header if needed
